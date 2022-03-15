@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  pre-install:
+  helm-chart-validation:
     runs-on: ubuntu-latest
     steps:
       - name: get pull request ref
@@ -20,7 +20,7 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: get chart location and service id
+      - name: Get chart location and service id
         id: vars
         run: |
           echo "::set-output name=chart_location::$(echo "${{ fromJson(steps.get_pull_request_ref.outputs.data).body }}" | grep path | awk '{print $4}')"
@@ -32,7 +32,7 @@ jobs:
           version: 'latest'
         id: install
 
-      - name: install kubeval
+      - name: Install kubeval
         run: helm plugin install https://github.com/instrumenta/helm-kubeval
 
       - name: Set up Python 3.8
@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: 3.8
 
-      - name: Scan Helm Charts
+      - name: Install checkov
         run: |
           pip install -U checkov
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -67,62 +67,48 @@ jobs:
         with:
           files: " ${{ steps.vars.outputs.chart_location }}/prod.values.yaml"
 
-      - name: Dev helm syntax check
+      - name: Check dev helm syntax
         if: steps.check_files_dev.outputs.files_exists == 'true'
         uses: igabaydulin/helm-check-action@0.1.4
         env:
           CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
           CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/dev.values.yaml
-      - name: Dev Scan Helm Chart
+      - name: Scan dev helm Chart
         if: steps.check_files_dev.outputs.files_exists == 'true'
         run: |
           cd ${{ steps.vars.outputs.chart_location }}
           helm template --debug -f dev.values.yaml ${{ steps.service-id.outputs.service-id }} . >> dev.temp.yaml
           checkov -f dev.temp.yaml --framework kubernetes || true
 
-      - name: Stage helm syntax check
+      - name: Check stage helm syntax
         if: steps.check_files_stage.outputs.files_exists == 'true'
         uses: igabaydulin/helm-check-action@0.1.4
         env:
           CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
           CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/stage.values.yaml
-      - name: Stage Scan Helm Chart
+      - name: Scan stage helm Chart
         if: steps.check_files_stage.outputs.files_exists == 'true'
         run: |
           cd ${{ steps.vars.outputs.chart_location }}
           helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> stage.temp.yaml
           checkov -f stage.temp.yaml --framework kubernetes || true
 
-      - name: Prod helm syntax check
+      - name: Check prod helm syntax
         if: steps.check_files_prod.outputs.files_exists == 'true'
         uses: igabaydulin/helm-check-action@0.1.4
         env:
           CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
           CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/prod.values.yamlocation.outputs.chart_location }}/prod.values.yaml)"
-      - name: Prod Scan Helm Chart
+      - name: Scan prod helm Chart
         if: steps.check_files_prod.outputs.files_exists == 'true'
         run: |
           cd ${{ steps.vars.outputs.chart_location }}
           helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> prod.temp.yaml
           checkov -f prod.temp.yaml --framework kubernetes || true
 
-      - name: kubernetes yaml syntax
+      - name: Check kubernetes schemas
         if: ${{ always() }}
         run: helm kubeval ${{ steps.vars.outputs.chart_location }}
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Scan Helm Charts
-        run: |
-          pip install -U checkov
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-          cd ${{ steps.vars.outputs.chart_location }}
-          helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> temp.yaml
-          checkov -f temp.yaml --framework kubernetes || true
 
       - name: Comment on PR
         id: test9

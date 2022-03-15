@@ -1,0 +1,31 @@
+{{- if .Values.httpProxy.enabled -}}
+{{- $fullName := include "api-server.fullname" . -}}
+{{- $svcPort := .Values.service.port.grpc -}}
+{{- $svcProtocl := "h2c" }}
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "api-server.labels" . | nindent 4 }}
+  {{- with .Values.httpProxy.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  virtualhost:
+    fqdn: {{ .Values.httpProxy.host }}
+  routes:
+    {{- range .Values.httpProxy.paths }}
+    - conditions:
+        - prefix: {{ .path }}
+      services:
+        - name: {{ $fullName }}
+          port: {{ $svcPort }}
+          protocol: {{ $svcProtocl }}
+      {{- if .retryPolicy }}
+      retryPolicy:
+        {{- toYaml .retryPolicy | nindent 8 }}
+      {{- end }}
+    {{- end }}
+  {{- end -}}

@@ -30,15 +30,9 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: 'latest'
-        id: install
 
       - name: Install kubeval
         run: helm plugin install https://github.com/instrumenta/helm-kubeval
-
-#      - name: Set up Python 3.8
-#        uses: actions/setup-python@v1
-#        with:
-#          python-version: 3.8
 
       - name: Install checkov
         run: |
@@ -110,8 +104,7 @@ jobs:
         if: ${{ always() }}
         run: helm kubeval ${{ steps.vars.outputs.chart_location }}
 
-      - name: Comment on PR
-        id: test9
+      - name: Success Comment on PR
         if: ${{ success() }}
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:
@@ -119,8 +112,7 @@ jobs:
             Helm syntex & Kubernetes schemas 문제 없습니다! 🚀
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Comment on PR
-        id: test10
+      - name: Fail Comment on PR
         if: ${{ failure() }}
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:

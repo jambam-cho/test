@@ -7,10 +7,8 @@ on:
       - main
 
 jobs:
-  helm-chart-validation:
+  pre-install:
     runs-on: ubuntu-latest
-    outputs:
-      chart_location: ${{ steps.vars.outputs.chart_location }}
     steps:
       - name: get pull request ref
         id: get_pull_request_ref
@@ -37,7 +35,67 @@ jobs:
       - name: install kubeval
         run: helm plugin install https://github.com/instrumenta/helm-kubeval
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Scan Helm Charts
+        run: |
+          pip install -U checkov
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
       - uses: actions/checkout@master
+
+      - name: Check dev-values existence
+        id: check_files_dev
+        uses: andstor/file-existence-action@v1
+        with:
+          files: " ${{ steps.vars.outputs.chart_location }}/dev.values.yaml"
+
+      - name: Check stage-values existence
+        id: check_files_stage
+        uses: andstor/file-existence-action@v1
+        with:
+          files: " ${{ steps.vars.outputs.chart_location }}/stage.values.yaml"
+
+      - name: Check prod-values existence
+        id: check_files_prod
+        uses: andstor/file-existence-action@v1
+        with:
+          files: " ${{ steps.vars.outputs.chart_location }}/prod.values.yaml"
+
+      - name: dev validation
+        if: steps.check_files_dev.outputs.files_exists == 'true'
+        uses: igabaydulin/helm-check-action@0.1.4
+        env:
+          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/dev.values.yaml
+        run: |
+          cd ${{ steps.vars.outputs.chart_location }}
+          helm template --debug -f dev.values.yaml ${{ steps.service-id.outputs.service-id }} . >> dev.temp.yaml
+          checkov -f dev.temp.yaml --framework kubernetes || true
+
+      - name: stage validation
+        if: steps.check_files_stage.outputs.files_exists == 'true'
+        uses: igabaydulin/helm-check-action@0.1.4
+        env:
+          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/stage.values.yaml
+        run: |
+          cd ${{ steps.vars.outputs.chart_location }}
+          helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> stage.temp.yaml
+          checkov -f stage.temp.yaml --framework kubernetes || true
+
+      - name: test8
+        id: test8
+        if: steps.check_files_prod.outputs.files_exists == 'true'
+        uses: igabaydulin/helm-check-action@0.1.4
+        env:
+          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/prod.values.yamlocation.outputs.chart_location }}/prod.values.yaml)"
 
       - name: kubernetes yaml syntax
         if: ${{ always() }}
@@ -54,10 +112,11 @@ jobs:
           chmod 700 get_helm.sh
           ./get_helm.sh
           cd ${{ steps.vars.outputs.chart_location }}
-          helm template --debug -f stage.values.yaml ${{ steps.vars.outputs.service_id }} . >> temp.yaml
+          helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> temp.yaml
           checkov -f temp.yaml --framework kubernetes || true
 
-      - name: Success Comment on PR
+      - name: Comment on PR
+        id: test9
         if: ${{ success() }}
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:
@@ -65,7 +124,8 @@ jobs:
             Helm syntex & Kubernetes schemas 문제 없습니다! 🚀
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Fail Comment on PR
+      - name: Comment on PR
+        id: test10
         if: ${{ failure() }}
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:

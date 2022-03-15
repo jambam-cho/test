@@ -26,6 +26,10 @@ jobs:
         id: vars
         run: echo "::set-output name=chart_location::$(echo "${{ fromJson(steps.get_pull_request_ref.outputs.data).body }}" | grep path | awk '{print $4}')"
 
+      - name: service-id
+        id: service-id
+        run: echo "::set-output name=service-id::$(echo "${{ fromJson(steps.get_pull_request_ref.outputs.data).body }}" | grep service | awk '{print $4}')"
+
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
@@ -93,7 +97,8 @@ jobs:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-          find -iname chart.yaml | xargs -n1 -I% bash -c " dirname %" | xargs -n1 -I% bash -c "helm template % > %.yaml && checkov -f %.yaml --framework kubernetes || true" --
+          helm template --debug -f ${{ steps.vars.outputs.chart_location }}/stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> temp.yaml
+          checkov -f temp.yaml --framework kubernetes || true
 
       - name: Comment on PR
         id: test9

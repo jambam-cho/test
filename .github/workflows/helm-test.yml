@@ -41,47 +41,47 @@ jobs:
 
       - uses: actions/checkout@master
 
-      - name: Check dev-values existence
-        id: check_files_dev
-        uses: andstor/file-existence-action@v1
-        with:
-          files: " ${{ steps.vars.outputs.chart_location }}/dev.values.yaml"
-
-      - name: test6
-        id: test6
-        if: steps.check_files_dev.outputs.files_exists == 'true'
-        uses: igabaydulin/helm-check-action@0.1.4
-        env:
-          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
-          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/dev.values.yaml
-
-      - name: Check stage-values existence
-        id: check_files_stage
-        uses: andstor/file-existence-action@v1
-        with:
-          files: " ${{ steps.vars.outputs.chart_location }}/stage.values.yaml"
-
-      - name: test7
-        id: test7
-        if: steps.check_files_stage.outputs.files_exists == 'true'
-        uses: igabaydulin/helm-check-action@0.1.4
-        env:
-          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
-          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/stage.values.yaml
-
-      - name: Check prod-values existence
-        id: check_files_prod
-        uses: andstor/file-existence-action@v1
-        with:
-          files: " ${{ steps.vars.outputs.chart_location }}/prod.values.yaml"
-
-      - name: test8
-        id: test8
-        if: steps.check_files_prod.outputs.files_exists == 'true'
-        uses: igabaydulin/helm-check-action@0.1.4
-        env:
-          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
-          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/prod.values.yamlocation.outputs.chart_location }}/prod.values.yaml)"
+#      - name: Check dev-values existence
+#        id: check_files_dev
+#        uses: andstor/file-existence-action@v1
+#        with:
+#          files: " ${{ steps.vars.outputs.chart_location }}/dev.values.yaml"
+#
+#      - name: test6
+#        id: test6
+#        if: steps.check_files_dev.outputs.files_exists == 'true'
+#        uses: igabaydulin/helm-check-action@0.1.4
+#        env:
+#          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+#          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/dev.values.yaml
+#
+#      - name: Check stage-values existence
+#        id: check_files_stage
+#        uses: andstor/file-existence-action@v1
+#        with:
+#          files: " ${{ steps.vars.outputs.chart_location }}/stage.values.yaml"
+#
+#      - name: test7
+#        id: test7
+#        if: steps.check_files_stage.outputs.files_exists == 'true'
+#        uses: igabaydulin/helm-check-action@0.1.4
+#        env:
+#          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+#          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/stage.values.yaml
+#
+#      - name: Check prod-values existence
+#        id: check_files_prod
+#        uses: andstor/file-existence-action@v1
+#        with:
+#          files: " ${{ steps.vars.outputs.chart_location }}/prod.values.yaml"
+#
+#      - name: test8
+#        id: test8
+#        if: steps.check_files_prod.outputs.files_exists == 'true'
+#        uses: igabaydulin/helm-check-action@0.1.4
+#        env:
+#          CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}
+#          CHART_VALUES: ${{ steps.vars.outputs.chart_location }}/prod.values.yamlocation.outputs.chart_location }}/prod.values.yaml)"
 
       - name: kubernetes yaml syntax
         if: ${{ always() }}

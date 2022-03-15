@@ -97,7 +97,8 @@ jobs:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-          helm template --debug -f ${{ steps.vars.outputs.chart_location }}/stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> temp.yaml
+          cd ${{ steps.vars.outputs.chart_location }}
+          helm template --debug -f stage.values.yaml ${{ steps.service-id.outputs.service-id }} . >> temp.yaml
           checkov -f temp.yaml --framework kubernetes || true
 
       - name: Comment on PR

@@ -81,7 +81,7 @@ jobs:
 
       - name: kubernetes yaml syntax
         if: ${{ always() }}
-        uses: helm kubeval ${{ steps.vars.outputs.chart_location }}
+        run: helm kubeval ${{ steps.vars.outputs.chart_location }}
 
       - name: Comment on PR
         id: test9

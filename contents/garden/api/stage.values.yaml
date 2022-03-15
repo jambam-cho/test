@@ -26,7 +26,7 @@ ingress:
     - host: garden.stage.dailyhou.se
       paths:
         - path: /
- httpProxy:
+httpProxy:
   enabled: true
   annotations:
     projectcontour.io/ingress.class: contour

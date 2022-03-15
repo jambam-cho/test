@@ -83,13 +83,25 @@ jobs:
         if: ${{ always() }}
         run: helm kubeval ${{ steps.vars.outputs.chart_location }}
 
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Scan Helm Charts
+        run: |
+          pip install -U checkov
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+          find -iname chart.yaml | xargs -n1 -I% bash -c " dirname %" | xargs -n1 -I% bash -c "helm template % > %.yaml && checkov -f %.yaml --framework kubernetes || true" --
+
       - name: Comment on PR
         id: test9
         if: ${{ success() }}
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:
           message: |-
-            Helm syntex 문제 없습니다! 🚀
+            Helm syntex & Kubernetes schemas 문제 없습니다! 🚀
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Comment on PR
@@ -98,7 +110,7 @@ jobs:
         uses: allthatjazzleo/actions-pull-request-add-comment@master
         with:
           message: |-
-            Helm syntax 체크하는 도중 문제가 발생했습니다. 아래 링크에서 확인해 주세요. 😢
+            Helm syntax or Kubernetes schemas 체크하는 도중 문제가 발생했습니다. 아래 링크에서 확인해 주세요. 😢
             [https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 

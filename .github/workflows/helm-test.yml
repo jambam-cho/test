@@ -1,4 +1,4 @@
-name: Helm chart Validation
+name: Helm chart Validation!
 
 on:
   pull_request:

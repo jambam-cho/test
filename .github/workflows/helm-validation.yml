@@ -62,7 +62,7 @@ jobs:
           files: " ${{ steps.vars.outputs.chart_location }}/prod.values.yaml"
 
       - name: Check dev helm syntax
-        if: steps.check_files_dev.outputs.files_exists == 'true'
+        if: steps.check_files_dev.outputs.files_exists == 'true' && ${{ always() }}
         uses: igabaydulin/helm-check-action@0.1.4
         env:
           CHART_LOCATION: ${{ steps.vars.outputs.chart_location }}

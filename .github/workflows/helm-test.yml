@@ -120,4 +120,3 @@ jobs:
             Helm syntax or Kubernetes schemas 체크하는 도중 문제가 발생했습니다. 아래 링크에서 확인해 주세요. 😢
             [https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-

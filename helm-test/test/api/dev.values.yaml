@@ -6,7 +6,7 @@ ecr:
 image:
   tag: "test"
   version: "test"
-resources:
+
   limits:
     cpu: 1
     memory: 2Gi

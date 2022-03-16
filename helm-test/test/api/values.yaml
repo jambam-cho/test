@@ -3,7 +3,7 @@ app:
   serviceName: garden-api
   serviceOwner: contents
   profile: dev
-  containerPort:
+
     http: 8080
     grpc: 50051
   sleepBeforeShutdown: 5
@@ -71,7 +71,7 @@ httpProxy:
   annotations: {}
   host: ''
   paths: []
-
+resources: {}
 externalSecret:
   database:
     enabled: false

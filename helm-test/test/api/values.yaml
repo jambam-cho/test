@@ -71,7 +71,7 @@ httpProxy:
   annotations: {}
   host: ''
   paths: []
-resources: {}
+
 externalSecret:
   database:
     enabled: false

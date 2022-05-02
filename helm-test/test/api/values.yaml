@@ -1,0 +1,102 @@
+replicaCount: 1
+app:
+  serviceName: garden-api
+  serviceOwner: contents
+  profile: dev
+
+    http: 8080
+    grpc: 50051
+  sleepBeforeShutdown: 5
+  logging:
+    enabled: false
+    multilinePattern: ^
+  apm:
+    enabled: false
+  livenessProbe:
+    exec:
+      command:
+      - /bin/grpc_health_probe
+      - -addr=:50051
+    initialDelaySeconds: 30
+  readinessProbe:
+    exec:
+      command:
+      - /bin/grpc_health_probe
+      - -addr=:50051
+    initialDelaySeconds: 10
+  extraEnvs: []
+mesh:
+  enabled: false
+  config:
+    config.alpha.linkerd.io/proxy-wait-before-exit-seconds: '5'
+ecr:
+  enabled: true
+  accountID: '387471694114'
+  region: ap-northeast-2
+image:
+  repository: contents/garden-api
+  pullPolicy: Always
+  tag: ''
+  version: ''
+imagePullSecrets: []
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ''
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+deployment:
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 0%
+service:
+  type: ClusterIP
+  port:
+    grpc: 50051
+    http: 80
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts:
+  - host: chart-example.local
+    paths: []
+  tls: []
+httpProxy:
+  enabled: false
+  annotations: {}
+  host: ''
+  paths: []
+resources: {}
+externalSecret:
+  database:
+    enabled: false
+    write:
+      secretAlias: ''
+    read:
+      secretAlias: ''
+  aws:
+    enabled: false
+    secretAlias: ''
+mapping:
+  enabled: false
+  gatewayId: gateway-01
+  resolver: endpoint
+filterPolicy:
+  enabled: false
+  rules: null
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -8,7 +8,7 @@ on:
 # Set env
 env:
   # NODE_ENV will be the name of branch
-  NODE_ENV: ${{ github.ref == 'refs/heads/feature/*' && 'dev' || 'stage' }}
+  NODE_ENV: ${{ github.ref == 'refs/heads/feature/**' && 'dev' || 'stage' }}
   AWS_REGION: ap-northeast-2
   ECS_TASK_DEFINITION: task-definition.json
 

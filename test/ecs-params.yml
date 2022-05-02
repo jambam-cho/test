@@ -1,0 +1,16 @@
+version: 1
+task_definition:
+  task_execution_role: ecsTaskExecutionRole
+  services:
+    crema-container-dev-backend:
+      cpu_shares: 50
+      mem_limit: 256
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - subnet-0989ee4513f6dcda6
+        - subnet-0f0eb31b964316b11
+      security_groups:
+        - sg-02cb6ee2c51db0db7
+      assign_public_ip: ENABLED

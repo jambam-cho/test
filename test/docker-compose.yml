@@ -1,0 +1,12 @@
+version: "3"
+services:
+  crema-container-dev-backend:
+    image: 331167824873.dkr.ecr.ap-northeast-2.amazonaws.com/crema-ecr-dev-backend:dev-0798071
+    ports:
+      - "8080:8080"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: crema-ecs-dev-cluster
+        awslogs-region: ap-northeast-2
+        awslogs-stream-prefix: crema-container-dev-backend

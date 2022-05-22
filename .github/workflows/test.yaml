@@ -2,7 +2,7 @@ name: Helm chart Validation
 
 on:
   pull_request:
-    types: [review_requested]
+    types: [review_requested, opened]
     branches:
       - 'feature/**'
 

@@ -5,7 +5,7 @@ on:
     types:
       - review_requested
     branches:
-      - 'feat/**'
+      - 'feature/**'
 
 # Set env
 env:

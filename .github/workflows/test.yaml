@@ -1,10 +1,11 @@
 name: Helm chart Validation
 
 on:
-  push:
+  pull_request:
+    types:
+      - review_requested
     branches:
-      - feature/OK-37259
-      - main
+      - 'feat/**'
 
 # Set env
 env:

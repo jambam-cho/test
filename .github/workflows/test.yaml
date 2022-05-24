@@ -29,7 +29,13 @@ jobs:
           echo ${{ github.event.pull_request.labels.*.name }}
           echo ${{ env.APP_NAME }}
       - name: test
-        if: github.event.pull_request.labels.*.name == ${{ env.APP_NAME }}
+        if: contains( github.event.pull_request.labels.*.name, env.APP_NAME )
+        run: |
+          echo ${{ env.NODE_ENV }}
+          echo ${{ github.ref }}
+          echo ${{ env.AWS_REGION }}
+      - name: test3
+        if: github.event.pull_request.labels.*.name == 'test'
         run: |
           echo ${{ env.NODE_ENV }}
           echo ${{ github.ref }}

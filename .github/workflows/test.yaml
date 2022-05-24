@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/OK-37259
   pull_request:
     types:
       - review_requested
@@ -29,7 +30,7 @@ jobs:
     name: get-tag
     runs-on: ubuntu-latest
     needs: init
-    if: contains( github.event.pull_request.labels.*.name, needs.init.outputs.APP_NAME )
+    if: ${{ success() }} && contains( github.event.pull_request.labels.*.name, needs.init.outputs.APP_NAME ) || github.ref == 'refs/heads/main'
     steps:
       - name: test1
         run: |
@@ -41,7 +42,7 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ env.AWS_REGION }}
       - name: test3
-        if: contains( github.event.pull_request.labels.*.name, 'test' )
+        if: contains( github.event.pull_request.labels.*.name, 'test' ) || github.ref == 'refs/heads/main'
         run: |
           echo ${{ env.NODE_ENV }}
           echo ${{ github.ref }}

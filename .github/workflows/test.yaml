@@ -18,11 +18,12 @@ env:
 
 jobs:
   get-image-tag:
-    if: ${{ env.APP_NAME == github.event.label.name }}
     name: get-tag
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - name: test
+        if: ${{ env.APP_NAME == github.event.label.name }}
+        run: |
           echo ${{ env.NODE_ENV }}
           echo ${{ github.ref }}
           echo ${{ env.AWS_REGION }}

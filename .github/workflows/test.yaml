@@ -22,7 +22,7 @@ jobs:
   get-image-tag:
     name: get-tag
     runs-on: ubuntu-latest
-    if: "$env.APP_NAME"
+    if: $env.APP_NAME
     steps:
       - name: test1
         run: |

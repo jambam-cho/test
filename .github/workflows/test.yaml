@@ -1,6 +1,9 @@
 name: Helm chart Validation
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types:
       - review_requested
@@ -15,7 +18,7 @@ env:
 
 jobs:
   get-image-tag:
-    if: ${{ env.APP_NAME }} == github.event.pull_request.labels.*.name
+    if: github.event.label.name == ${{ env.APP_NAME }}
     name: get-tag
     runs-on: ubuntu-latest
     steps:

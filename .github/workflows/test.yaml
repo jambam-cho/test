@@ -15,7 +15,7 @@ env:
 
 jobs:
   get-image-tag:
-    if: ${{ contains( github.event.pull_request.labels.*.name, env.APP_NAME ) }}
+    if: ${{ env.APP_NAME }} == github.event.pull_request.labels.*.name
     name: get-tag
     runs-on: ubuntu-latest
     steps:

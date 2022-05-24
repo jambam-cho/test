@@ -23,7 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       APP_NAME: bug
-
+    steps:
+      - name: checkout-code
+        uses: actions/checkout@v2
   get-image-tag:
     name: get-tag
     runs-on: ubuntu-latest

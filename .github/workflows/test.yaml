@@ -19,17 +19,22 @@ env:
   ECS_TASK_DEFINITION: task-definition.json
 
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      APP_NAME: bug
+
   get-image-tag:
     name: get-tag
     runs-on: ubuntu-latest
-    if: env.APP_NAME
+    needs: init
+    if: contains( github.event.pull_request.labels.*.name, needs.outputs.APP_NAME ) || github.ref == 'refs/heads/main'
     steps:
       - name: test1
         run: |
           echo ${{ github.event.pull_request.labels.*.name }}
           echo ${{ env.APP_NAME }}
       - name: test
-        if: contains( github.event.pull_request.labels.*.name, env.APP_NAME ) || github.ref == 'refs/heads/main'
         run: |
           echo ${{ env.NODE_ENV }}
           echo ${{ github.ref }}

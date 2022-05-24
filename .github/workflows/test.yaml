@@ -21,6 +21,10 @@ jobs:
     name: get-tag
     runs-on: ubuntu-latest
     steps:
+      - name: test1
+        run: |
+          echo ${{ github.event.label.name }}
+          echo ${{ env.APP_NAME }}
       - name: test
         if: ${{ env.APP_NAME == github.event.label.name }}
         run: |

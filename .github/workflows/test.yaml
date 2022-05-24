@@ -35,7 +35,7 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ env.AWS_REGION }}
       - name: test3
-        if: contains( github.event.pull_request.labels.*.name, test )
+        if: contains( github.event.pull_request.labels.*.name, 'test' )
         run: |
           echo ${{ env.NODE_ENV }}
           echo ${{ github.ref }}

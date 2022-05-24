@@ -29,7 +29,7 @@ jobs:
     name: get-tag
     runs-on: ubuntu-latest
     needs: init
-    if: contains( github.event.pull_request.labels.*.name, needs.outputs.APP_NAME ) || github.event.pull_request.merged == true
+    if: contains( github.event.pull_request.labels.*.name, needs.init.outputs.APP_NAME ) || github.event.pull_request.merged == true
     steps:
       - name: test1
         run: |

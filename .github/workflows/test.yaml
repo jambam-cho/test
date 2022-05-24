@@ -30,7 +30,7 @@ jobs:
     name: get-tag
     runs-on: ubuntu-latest
     needs: init
-    if: ${{ success() }} && contains( github.event.pull_request.labels.*.name, needs.init.outputs.APP_NAME ) || github.ref == 'refs/heads/main'
+    if: ${{ success() }} && (contains( github.event.pull_request.labels.*.name, needs.init.outputs.APP_NAME ) || github.ref == 'refs/heads/main')
     steps:
       - name: test1
         run: |

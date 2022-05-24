@@ -21,6 +21,7 @@ jobs:
   get-image-tag:
     name: get-tag
     runs-on: ubuntu-latest
+    if: contains( github.event.pull_request.labels.*.name, env.APP_NAME ) || github.ref == 'refs/heads/main'
     steps:
       - name: test1
         run: |
